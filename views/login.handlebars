@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MediaBucket Login</title>
+</head>
+
+<body>
+    <h1>MediaBucket Login</h1>
+
+    {{#if account}}
+        Hi, {{account.email}}
+    {{/if}}
+
+    <div>
+        <input id="email" type="email" placeholder="Email">
+        <input id="password" type="password" placeholder="Password">
+        <button id="login">Login</button>
+        <small id="error"></small>
+        <small id="success"></small>
+    </div>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/superagent/2.1.0/superagent.min.js"></script>
+    <script type="text/javascript">
+        var errorField = document.getElementById('error');
+        var successField = document.getElementById('success');
+
+        document.getElementById('login').onclick = function() {
+            errorField.innerText = '';
+            successField.innerText = '';
+            superagent
+                .post('/login')
+                .send({
+                    email: document.getElementById('email').value,
+                    password: document.getElementById('password').value
+                })
+                .end(function (err, res) {
+                    if (err) errorField.innerText = (res && res.body.message) || 'Please try again later';
+                    if (res.body.returnTo) window.location.href = decodeURIComponent(res.body.returnTo);
+                    else successField.innerText = 'Login successful';
+                });
+        };
+    </script>
+</body>
+
+</html>

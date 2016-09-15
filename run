@@ -1,0 +1,19 @@
+#!/usr/bin/env node
+
+'use strict';
+
+const Yargs = require('yargs');
+const Path = require('path');
+
+// IMPORTANT : keep that on top of the file to override the env
+if (Yargs.argv.env) process.env.NODE_ENV = Yargs.argv.env;
+const toolPath = process.argv.slice(2)[0];
+
+const Tool = require(Path.join(process.cwd(), toolPath));
+
+const args = Tool
+  .describe(Yargs)
+  .help('h')
+  .alias('h', 'help').argv;
+
+new Tool(args).doRun();

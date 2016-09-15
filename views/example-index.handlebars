@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Example app</title>
+</head>
+
+<body>
+<h1>Example app - not connected</h1>
+<button id="connect">Connect with MediaBucket</button>
+
+<script type="text/javascript">
+    var AUTH_HOST = '{{authHost}}';
+    var HOMEPAGE = '{{client.homepage}}';
+    var CLIENT_ID = '{{client.id}}';
+    const HREF = AUTH_HOST + '/authorize?response_type=code&client_id=' + CLIENT_ID + '&redirect_uri=' + encodeURI(HOMEPAGE);
+    console.log(HREF);
+    document.getElementById('connect').onclick = function () {
+        window.location.href = HREF;
+    };
+</script>
+</body>
+
+</html>

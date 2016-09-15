@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Example app</title>
+</head>
+
+<body>
+
+{{#if denied}}
+    <h1>User denied access.</h1>
+    <button><a href="/">Retry</a></button>
+{{else}}
+    <h1>Example app now has a token to make requests on the user's behalf.</h1>
+    <button id="request">Fetch account information</button>
+    <small id="errorField"></small>
+    <div id="info" style="display: none;">
+        <ul>
+            <li>Id : <span id="id"></span></li>
+            <li>Email : <span id="email"></span></li>
+        </ul>
+    </div>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/superagent/2.1.0/superagent.min.js"></script>
+    <script type="text/javascript">
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                    results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+
+
+
+        var errorField = document.getElementById('errorField');
+        var idField = document.getElementById('id');
+        var emailField = document.getElementById('email');
+        var infoField = document.getElementById('info');
+        var AUTH_HOST = '{{authHost}}';
+        var TOKEN = '{{token}}';
+
+        document.getElementById('request').onclick = function () {
+            errorField.innerText = '';
+            idField.innerText = '';
+            emailField.innerText = '';
+            infoField.style.display = 'none';
+
+            superagent
+                .get(AUTH_HOST + '/me')
+                .set('Authorization', 'Bearer ' + TOKEN)
+                .set('Accept', 'application/json')
+                .end(function (err, res) {
+                    if (err || res.statusCode >= 400) {
+                        return errorField.innerText = err.message || res.body.message;
+                    }
+                    idField.innerText = res.body.data.id;
+                    emailField.innerText = res.body.data.email;
+                    infoField.style.display = 'block';
+                });
+        };
+    </script>
+{{/if}}
+
+</body>
+
+</html>
